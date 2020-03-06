@@ -1,29 +1,38 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
 
     private int numOfCorrectAnswers = 3;
     private int currentLevel = 1;
-    private int currentlySelectedCards = 0;
+    TextMeshProUGUI levelText;
 
-
-
-    // TODO: check to see when player has clicked multiple answers
-    // add a levelup function
+    // TODO:
+    // add a levelup function - a rudimentry level system is currently in place, all it does at the moment is change the text of the level text object.
     // add a change difficulty function based of level ranges
 
     void Start()
     {
-
+        levelText = GameObject.Find("LevelNumberText").GetComponent<TextMeshProUGUI>();
     }
 
     void Update()
     {
 
     }
+
+    /// <summary>
+    /// Changes the current level text by 1
+    /// </summary>
+    public void setCurrentLevel()
+    {
+        currentLevel += 1;
+        levelText.text = currentLevel.ToString();
+    }
+
     /// <summary>
     /// returns the number of correct answers
     /// </summary>
@@ -31,14 +40,6 @@ public class LevelManager : MonoBehaviour
     public int getNumberOfAnswers()
     {
         return numOfCorrectAnswers;
-    }
-    /// <summary>
-    /// update how many cards the player has selected
-    /// </summary>
-    /// <param name="value"></param>
-    public void setCurrentlySelectedCards(int value = 1)
-    {
-        currentlySelectedCards += value;
     }
 
 }

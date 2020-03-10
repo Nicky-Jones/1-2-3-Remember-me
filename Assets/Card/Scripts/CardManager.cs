@@ -8,29 +8,34 @@ public class CardManager : MonoBehaviour
 
     GameObject[] cards;
     LevelManager lManager;
+    DifficultyManager dManager;
     [SerializeField]
     private int currentlySelectedCards = 0;
     private int cardClickable = 0;
     private int checkAnswerDelay = 0;
     private int correctAnswer = 0;
-    List<int> numberGenerator = new List<int>();
     [SerializeField]
     private float delayDuration = 5.0f;
-    private float countDown; 
+    [SerializeField]
+    private float countDown = 5.0f; 
     [SerializeField]
     private float endRoundDuration = 5.0f;
     private int roundProgression = 0;
+    private int canCountDown = 0;
+    private int updateSwitch = 0;
 
     //TODO:
     // Add functionality to determin if the cards the player has selected are correct - completed but needs to be more flushed out by creating a display for success or failure.
     // if the cards are correct, advance to the next level, otherwise repeat same level with randomised cards - again - completed.
     // Add some kind of functionality to show the player which card they've currently clicked, at the moment its not immediately obvious after clicking the first one/two which ones you actually clicked
     // perhaps this could be returned to how it is now if a "hard" mode is ever designed.
+    // add another difficulty that implements a new type of card they have to avoid clicking, e.g. 1 of hearts as it closely resembles the 1 of diamonds.
 
     private void Start()
     {
         cards = GameObject.FindGameObjectsWithTag("Card");
         lManager = GameObject.Find("SceneManager").GetComponent<LevelManager>();
+        dManager = GameObject.Find("SceneManager").GetComponent<DifficultyManager>();
 
         countDown = delayDuration;
         randomiseCards();
@@ -39,38 +44,60 @@ public class CardManager : MonoBehaviour
 
     private void Update()
     {
-        // checks to see if the number of cards selected 
-        if (currentlySelectedCards == lManager.GetComponent<LevelManager>().getNumberOfAnswers() && roundProgression == 0)
+        if (currentlySelectedCards == dManager.getNumberOfAnswers() && updateSwitch == 0 && checkAnswerDelay == 0)
         {
             disableClickableCards();
             checkAnswerDelay = 1;
-            countDown -= Time.deltaTime;
-            if (currentlySelectedCards != 3 && checkAnswerDelay == 1)
-            {
-                resetCountDown(delayDuration);
-                return;
-            }
-            if(countDown < 0)
-            {
-                confirmAnswers();
-                roundProgression = 1;
-                resetCountDown(delayDuration);
-            }
+            canCountDown = 1;
         }
-        if(roundProgression == 1)
+        else if(currentlySelectedCards != dManager.getNumberOfAnswers() && checkAnswerDelay == 1)
         {
-            
-            if (countDown == delayDuration)
-            {
-                StartCoroutine(displayCards(3));
-            }
-            countDown -= Time.deltaTime;
-            if(countDown < 0)
-            {
-                changeLevel();
-            }
+            resetCountDown(delayDuration);
+            canCountDown = 0;
+        }
+        if(countDown < 0.0f && updateSwitch == 0)
+        {
+            resetCountDown(delayDuration);
+            confirmAnswers();
+            updateSwitch = 1;
+        }
+        if(updateSwitch == 1 && roundProgression == 0)
+        {
+            Debug.Log("updateSwitch = 1");
+            roundProgression = 1;
+            StartCoroutine(displayCards(3));
+            canCountDown = 1;
+        }
+        if(countDown < 0.0f && roundProgression == 1)
+        {
+            resetCountDown(delayDuration);
+            changeLevel();
+        }
+        if(canCountDown == 1 && countDown > 0.0f)
+        {
+            countDown -= Time.unscaledDeltaTime;
         }
     }
+
+    /// <summary>
+    /// Restarts the script back to default
+    /// </summary>
+    private void resetCardManager()
+    {
+        currentlySelectedCards = 0;
+        cardClickable = 0;
+        checkAnswerDelay = 0;
+        updateSwitch = 0;
+        canCountDown = 0;
+        correctAnswer = 0;
+        resetCountDown(delayDuration);
+        roundProgression = 0;
+        foreach (GameObject card in cards)
+        {
+            card.GetComponent<CardScript>().resetCard();
+        }
+    }
+
     /// <summary>
     /// Start a new round
     /// </summary>
@@ -101,14 +128,15 @@ public class CardManager : MonoBehaviour
     /// </summary>
     private void changeLevel()
     {
-        if (correctAnswer == lManager.getNumberOfAnswers())
+        Debug.Log("inside changeLevel function");
+        if (correctAnswer == dManager.getNumberOfAnswers())
         {
+            Debug.Log("inside correctAnswer Function");
             lManager.setCurrentLevel();
         }
         startRound();
-        Debug.Log("inside changeLevel function");
+        Debug.Log("inside end of changeLevel function");
     }
-
 
     /// <summary>
     /// a delay function to display the cards to the player for a determined time
@@ -133,36 +161,23 @@ public class CardManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Restarts the script back to default
-    /// </summary>
-    private void resetCardManager()
-    {
-        currentlySelectedCards = 0;
-        cardClickable = 0;
-        checkAnswerDelay = 0;
-        correctAnswer = 0;
-        resetCountDown(delayDuration);
-        roundProgression = 0;
-        foreach (GameObject card in cards)
-        {
-            card.GetComponent<CardScript>().resetCard();
-        }
-    }
-
-    /// <summary>
     /// Randomises a number that isn't a duplicate
     /// </summary>
     /// <returns></returns>
-    private int randomNumber()
+    private int randomNumber(List<int> number)
     {
         int randNum = Random.Range(0, cards.Length);
-        if(numberGenerator.Contains(randNum))
+        int temp = 0;
+        while (temp == 0)
         {
-            randNum = Random.Range(0, cards.Length);
+            if (number.Contains(randNum) == true)
+            {
+                randNum = Random.Range(0, cards.Length);
+            }
+            else
+                temp = 1;
         }
-        else
-            numberGenerator.Add(randNum);
-
+        number.Add(randNum);
         return randNum;
     }
 
@@ -171,17 +186,18 @@ public class CardManager : MonoBehaviour
     /// </summary>
     public void randomiseCards()
     {
-        int temp = 0;
+        List<int> numberGenerator = new List<int>();
+        int temp = 1;
         for (int i = 0; i < cards.Length; i++)
         {
-            if (temp <= 2)
+            if (temp <= dManager.getNumberOfAnswers())
             {
                 int randNumber;
-                randNumber = randomNumber();
+                randNumber = randomNumber(numberGenerator);
                 cards[randNumber].GetComponent<CardScript>().setCorrectCard(true);
                 temp += 1;
             }
-            if (temp >= 4)
+            else
                 return;
         }
     }

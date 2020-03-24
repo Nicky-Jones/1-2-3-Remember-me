@@ -9,26 +9,45 @@ public class DifficultyManager : MonoBehaviour
     private int levelOneDifficulty = 3;
     [SerializeField]
     private int levelTwoDifficulty = 5;
+    [SerializeField]
+    private int levelThreedifficulty = 3;
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    private int currentLevelDifficulty;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
+    /// <summary>
+    /// updates the game data required for level 1 difficulty
+    /// </summary>
     public void levelDifficultyOne()
     {
         numOfCorrectAnswers = levelOneDifficulty;
+        currentLevelDifficulty = 1;
     }
+
+    /// <summary>
+    /// updates the game data required for level 2 difficulty
+    /// </summary>
     public void levelDifficultyTwo()
     {
         numOfCorrectAnswers = levelTwoDifficulty;
+        currentLevelDifficulty = 2;
+    }
+
+    /// <summary>
+    /// updates the game data required for level 3 difficulty
+    /// </summary>
+    public void levelDifficultyThree()
+    {
+        numOfCorrectAnswers = levelThreedifficulty;
+        currentLevelDifficulty = 3;
+    }
+
+    /// <summary>
+    /// returns the current difficulty of the game
+    /// </summary>
+    /// <returns></returns>
+    public int getLevelDifficulty()
+    {
+        return currentLevelDifficulty;
     }
 
     /// <summary>

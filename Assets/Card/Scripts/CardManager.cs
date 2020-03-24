@@ -29,7 +29,7 @@ public class CardManager : MonoBehaviour
     // if the cards are correct, advance to the next level, otherwise repeat same level with randomised cards - again - completed.
     // Add some kind of functionality to show the player which card they've currently clicked, at the moment its not immediately obvious after clicking the first one/two which ones you actually clicked
     // perhaps this could be returned to how it is now if a "hard" mode is ever designed.
-    // add another difficulty that implements a new type of card they have to avoid clicking, e.g. 1 of hearts as it closely resembles the 1 of diamonds.
+    // add another difficulty that implements a new type of card they have to avoid clicking, e.g. 1 of hearts as it closely resembles the 1 of diamonds. - completed
 
     private void Start()
     {
@@ -164,7 +164,7 @@ public class CardManager : MonoBehaviour
     /// Randomises a number that isn't a duplicate
     /// </summary>
     /// <returns></returns>
-    private int randomNumber(List<int> number)
+    private int randomNumberGenerator(List<int> number)
     {
         int randNum = Random.Range(0, cards.Length);
         int temp = 0;
@@ -186,15 +186,20 @@ public class CardManager : MonoBehaviour
     /// </summary>
     public void randomiseCards()
     {
-        List<int> numberGenerator = new List<int>();
+        List<int> numberGeneratorList = new List<int>();
         int temp = 1;
         for (int i = 0; i < cards.Length; i++)
         {
             if (temp <= dManager.getNumberOfAnswers())
             {
                 int randNumber;
-                randNumber = randomNumber(numberGenerator);
-                cards[randNumber].GetComponent<CardScript>().setCorrectCard(true);
+                randNumber = randomNumberGenerator(numberGeneratorList);
+                cards[randNumber].GetComponent<CardScript>().setCard(1);
+                if (dManager.getLevelDifficulty() == 3)
+                {
+                    randNumber = randomNumberGenerator(numberGeneratorList);
+                    cards[randNumber].GetComponent<CardScript>().setCard(2);
+                }
                 temp += 1;
             }
             else

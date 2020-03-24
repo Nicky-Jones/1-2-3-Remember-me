@@ -5,28 +5,40 @@ using UnityEngine;
 
 public class CardScript : MonoBehaviour {
 
+    [SerializeField]
     private bool correctCard = false;
     private bool clickedCard = false;
+    private bool heartCard = false;
     CardManager cManager;
+    DifficultyManager dManager;
     [SerializeField]
     private Sprite cardBack;
     [SerializeField]
-    private Sprite cardFront;
+    private Sprite cardDiamond;
+    [SerializeField]
+    private Sprite cardHeart;
     [SerializeField]
     private Sprite cardBlank;
 
     private void Start()
     {
         cManager = GameObject.Find("SceneManager").GetComponent<CardManager>();
+        dManager = GameObject.Find("SceneManager").GetComponent<DifficultyManager>();
     }
 
     /// <summary>
-    /// tag the card to inform itself that it is one of the correct cards
+    /// if the Decision = 1 the card is correct but if the decision = 2 I want the card to display a heart version to make things more complicated for the player to remember
+    /// this function can now be further modified if a user wants to add more cards to trip players up in the future.
     /// </summary>
-    /// <param name="decision"></param>
-    public void setCorrectCard(bool decision)
+    /// <param name="decision"> if decision = 1 the card is correct if decision = 2 the card becomes a heart card</param>
+    public void setCard(int decision)
     {
-        correctCard = decision;
+        if (decision == 1)
+            correctCard = true;
+        else if (decision == 2)
+            heartCard = true;
+        else
+            Debug.Log("Error in SetCard function - CardScript");
     }
 
     /// <summary>
@@ -87,7 +99,11 @@ public class CardScript : MonoBehaviour {
     {
         if(correctCard == true)
         {
-            this.GetComponent<Image>().sprite = cardFront;
+            this.GetComponent<Image>().sprite = cardDiamond;
+        }
+        else if(heartCard == true)
+        {
+            this.GetComponent<Image>().sprite = cardHeart;
         }
         else
         {

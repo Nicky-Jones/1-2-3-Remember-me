@@ -11,8 +11,6 @@ public class LevelManager : MonoBehaviour
     DifficultyManager dManager;
 
     // TODO:
-    // add a levelup function - a rudimentry level system is currently in place, all it does at the moment is change the text of the level text object.
-    // add a change difficulty function based of level ranges
 
     private void Awake()
     {
@@ -20,18 +18,13 @@ public class LevelManager : MonoBehaviour
         dManager = GameObject.Find("SceneManager").GetComponent<DifficultyManager>();
         startRound();
     }
-    void Start()
-    {
-        
-    }
 
-    void Update()
-    {
 
-    }
     private void startRound()
     {
-        if (currentLevel >= 10 && currentLevel < 20)
+        if (currentLevel >= 20)
+            dManager.levelDifficultyThree();
+        else if (currentLevel >= 10 && currentLevel < 20)
             dManager.levelDifficultyTwo();
         else
             dManager.levelDifficultyOne();
@@ -44,9 +37,11 @@ public class LevelManager : MonoBehaviour
     {
         currentLevel += 1;
         levelText.text = currentLevel.ToString();
-        if(currentLevel == 10)
-        {
+        if (currentLevel >= 10 && currentLevel < 20)
             dManager.levelDifficultyTwo();
-        }
+        else if (currentLevel >= 20)
+            dManager.levelDifficultyThree();
+        else
+            Debug.Log("Error: SetCurrentLevel Function - LevelManager Script");
     }
 }

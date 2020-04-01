@@ -9,7 +9,7 @@ public class CardScript : MonoBehaviour {
     private bool correctCard = false;
     private bool clickedCard = false;
     private bool heartCard = false;
-    CardManager cManager;
+    CardController cManager;
     DifficultyManager dManager;
     [SerializeField]
     private Sprite cardBack;
@@ -22,7 +22,7 @@ public class CardScript : MonoBehaviour {
 
     private void Start()
     {
-        cManager = GameObject.Find("SceneManager").GetComponent<CardManager>();
+        cManager = GameObject.Find("SceneManager").GetComponent<CardController>();
         dManager = GameObject.Find("SceneManager").GetComponent<DifficultyManager>();
     }
 

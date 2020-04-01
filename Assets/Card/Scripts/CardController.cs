@@ -3,12 +3,13 @@ using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 
-public class CardManager : MonoBehaviour
+public class CardController : MonoBehaviour
 {
 
     GameObject[] cards;
     LevelManager lManager;
     DifficultyManager dManager;
+    UIManager uiManager;
     [SerializeField]
     private int currentlySelectedCards = 0;
     private int cardClickable = 0;
@@ -19,12 +20,13 @@ public class CardManager : MonoBehaviour
     [SerializeField]
     private float countDown = 5.0f; 
     [SerializeField]
-    private float endRoundDuration = 5.0f;
+    private int endRoundDuration = 5;
     private int roundProgression = 0;
     private int canCountDown = 0;
     private int updateSwitch = 0;
 
     //TODO:
+    // Add some kind of UI system that congratulates or consolodates the player if they've answered correctly/failed - Completed
     // Add functionality to determin if the cards the player has selected are correct - completed but needs to be more flushed out by creating a display for success or failure.
     // if the cards are correct, advance to the next level, otherwise repeat same level with randomised cards - again - completed.
     // Add some kind of functionality to show the player which card they've currently clicked, at the moment its not immediately obvious after clicking the first one/two which ones you actually clicked
@@ -36,6 +38,7 @@ public class CardManager : MonoBehaviour
         cards = GameObject.FindGameObjectsWithTag("Card");
         lManager = GameObject.Find("SceneManager").GetComponent<LevelManager>();
         dManager = GameObject.Find("SceneManager").GetComponent<DifficultyManager>();
+        uiManager = GameObject.Find("SceneManager").GetComponent<UIManager>();
 
         countDown = delayDuration;
         randomiseCards();
@@ -57,15 +60,14 @@ public class CardManager : MonoBehaviour
         }
         if(countDown < 0.0f && updateSwitch == 0)
         {
-            resetCountDown(delayDuration);
+            resetCountDown(endRoundDuration);
             confirmAnswers();
             updateSwitch = 1;
         }
         if(updateSwitch == 1 && roundProgression == 0)
         {
-            Debug.Log("updateSwitch = 1");
             roundProgression = 1;
-            StartCoroutine(displayCards(3));
+            StartCoroutine(displayCards(endRoundDuration, 1));
             canCountDown = 1;
         }
         if(countDown < 0.0f && roundProgression == 1)
@@ -128,14 +130,11 @@ public class CardManager : MonoBehaviour
     /// </summary>
     private void changeLevel()
     {
-        Debug.Log("inside changeLevel function");
         if (correctAnswer == dManager.getNumberOfAnswers())
         {
-            Debug.Log("inside correctAnswer Function");
             lManager.setCurrentLevel();
         }
         startRound();
-        Debug.Log("inside end of changeLevel function");
     }
 
     /// <summary>
@@ -143,14 +142,23 @@ public class CardManager : MonoBehaviour
     /// </summary>
     /// <param name="delay">The delay in how long the player can view what the function does</param>
     /// <returns>returns nothing after a set delay</returns>
-    IEnumerator displayCards(int delay = 1)
+    IEnumerator displayCards(int delay = 1, int endOfLevel = 0)
     {
-        Debug.Log("inside displayCards Function");
         foreach (GameObject card in cards)
         {
             card.GetComponent<CardScript>().changeImage();
         }
 
+        if(endOfLevel == 1)
+        {
+            if (correctAnswer == dManager.getNumberOfAnswers())
+            {
+                uiManager.setLevelPassBanner(1);
+            }
+            else
+                uiManager.setLevelFailBanner(1);
+            endOfLevel = 2;
+        }
 
         yield return new WaitForSeconds(delay);
 
@@ -158,6 +166,13 @@ public class CardManager : MonoBehaviour
         {
             card.GetComponent<CardScript>().defaultImage();
         }
+
+        if (endOfLevel == 2)
+        {
+            uiManager.setLevelPassBanner(0);
+            uiManager.setLevelFailBanner(0);
+        }
+
     }
 
     /// <summary>

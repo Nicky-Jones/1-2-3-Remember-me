@@ -7,18 +7,23 @@ public class LevelManager : MonoBehaviour
 {
     [SerializeField]
     private int currentLevel = 1;
-    TextMeshProUGUI levelText;
+    UIManager uiManager;
     DifficultyManager dManager;
 
     // TODO:
 
     private void Awake()
     {
-        levelText = GameObject.Find("LevelNumberText").GetComponent<TextMeshProUGUI>();
         dManager = GameObject.Find("SceneManager").GetComponent<DifficultyManager>();
+        uiManager = GameObject.Find("SceneManager").GetComponent<UIManager>();
         startRound();
     }
 
+    private void Start()
+    {
+
+        uiManager.setLevelText(currentLevel);
+    }
 
     private void startRound()
     {
@@ -28,7 +33,6 @@ public class LevelManager : MonoBehaviour
             dManager.levelDifficultyTwo();
         else
             dManager.levelDifficultyOne();
-        levelText.text = currentLevel.ToString();
     }
     /// <summary>
     /// Changes the current level text by 1
@@ -36,12 +40,10 @@ public class LevelManager : MonoBehaviour
     public void setCurrentLevel()
     {
         currentLevel += 1;
-        levelText.text = currentLevel.ToString();
-        if (currentLevel >= 10 && currentLevel < 20)
+        uiManager.setLevelText(currentLevel);
+        if (currentLevel == 10)
             dManager.levelDifficultyTwo();
-        else if (currentLevel >= 20)
+        else if (currentLevel == 20)
             dManager.levelDifficultyThree();
-        else
-            Debug.Log("Error: SetCurrentLevel Function - LevelManager Script");
     }
 }

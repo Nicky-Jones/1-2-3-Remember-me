@@ -57,6 +57,7 @@ public class CardController : MonoBehaviour
         {
             resetCountDown(delayDuration);
             canCountDown = 0;
+            checkAnswerDelay = 0;
         }
         if(countDown < 0.0f && updateSwitch == 0)
         {

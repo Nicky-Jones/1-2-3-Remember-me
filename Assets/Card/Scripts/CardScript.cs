@@ -9,21 +9,27 @@ public class CardScript : MonoBehaviour {
     private bool correctCard = false;
     private bool clickedCard = false;
     private bool heartCard = false;
+    private ColorBlock cardColors;
     CardController cManager;
     DifficultyManager dManager;
+    [Tooltip("Image for the back of the card")]
     [SerializeField]
     private Sprite cardBack;
+    [Tooltip("Image for the correct card")]
     [SerializeField]
     private Sprite cardDiamond;
+    [Tooltip("Image for the fake correct card")]
     [SerializeField]
     private Sprite cardHeart;
+    [Tooltip("Image for the blank card")]
     [SerializeField]
     private Sprite cardBlank;
-
     private void Start()
     {
         cManager = GameObject.Find("SceneManager").GetComponent<CardController>();
         dManager = GameObject.Find("SceneManager").GetComponent<DifficultyManager>();
+        cardColors = this.GetComponent<Button>().colors;
+
     }
 
     /// <summary>
@@ -40,7 +46,7 @@ public class CardScript : MonoBehaviour {
         else
             Debug.Log("Error in SetCard function - CardScript");
     }
-
+    
     /// <summary>
     /// tags the card to confirm the player has either clicked or unclicked this card
     /// </summary>
@@ -51,9 +57,11 @@ public class CardScript : MonoBehaviour {
             clickedCard = false;
             cManager.setCurrentlySelectedCards(-1);
             cManager.enableClickableCards();
+            this.transform.GetChild(0).gameObject.SetActive(false);
             return;
         }
         clickedCard = true;
+        this.transform.GetChild(0).gameObject.SetActive(true);
         cManager.setCurrentlySelectedCards();
     }
 
@@ -90,6 +98,7 @@ public class CardScript : MonoBehaviour {
         enableClick();
         correctCard = false;
         clickedCard = false;
+        this.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     /// <summary>

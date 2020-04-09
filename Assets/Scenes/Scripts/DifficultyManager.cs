@@ -5,11 +5,14 @@ using UnityEngine;
 public class DifficultyManager : MonoBehaviour
 {
     private int numOfCorrectAnswers;
+    [Tooltip("The amount of available answers that's possible each round")]
     [SerializeField]
     private int levelOneDifficulty = 3;
     [SerializeField]
+    [Tooltip("The amount of available answers that's possible each round")]
     private int levelTwoDifficulty = 5;
     [SerializeField]
+    [Tooltip("The amount of available answers that's possible each round")]
     private int levelThreedifficulty = 3;
 
     private int currentLevelDifficulty;

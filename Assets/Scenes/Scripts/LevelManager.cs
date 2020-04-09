@@ -5,7 +5,6 @@ using TMPro;
 
 public class LevelManager : MonoBehaviour
 {
-    [SerializeField]
     private int currentLevel = 1;
     UIManager uiManager;
     DifficultyManager dManager;
@@ -21,7 +20,6 @@ public class LevelManager : MonoBehaviour
 
     private void Start()
     {
-
         uiManager.setLevelText(currentLevel);
     }
 

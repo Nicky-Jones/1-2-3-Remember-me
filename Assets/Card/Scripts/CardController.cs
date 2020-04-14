@@ -220,6 +220,7 @@ public class CardController : MonoBehaviour
                 if (dManager.getLevelDifficulty() == 3)
                 {
                     randNumber = randomNumberGenerator(numberGeneratorList);
+                    Debug.Log("How many times am i hitting this");
                     cards[randNumber].GetComponent<CardScript>().setCard(2);
                 }
                 temp += 1;

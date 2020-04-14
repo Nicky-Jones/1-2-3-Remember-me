@@ -10,16 +10,17 @@ public class CardController : MonoBehaviour
     LevelManager lManager;
     DifficultyManager dManager;
     UIManager uiManager;
-    [SerializeField]
     private int currentlySelectedCards = 0;
     private int cardClickable = 0;
     private int checkAnswerDelay = 0;
     private int correctAnswer = 0;
+    [HeaderAttribute("Adjustable values")]
+    [Tooltip("Changable value for adjusting the length at which the delay of checking the cards for the banner animation")]
     [SerializeField]
     private float delayDuration = 5.0f;
+    [Tooltip("Value for how long you want the player to have before his choices are locked in")]
     [SerializeField]
     private float countDown = 5.0f; 
-    [SerializeField]
     private int endRoundDuration = 5;
     private int roundProgression = 0;
     private int canCountDown = 0;
@@ -41,8 +42,6 @@ public class CardController : MonoBehaviour
         uiManager = GameObject.Find("SceneManager").GetComponent<UIManager>();
 
         countDown = delayDuration;
-        randomiseCards();
-        StartCoroutine(roundDelay());
     }
 
     private void Update()
@@ -77,9 +76,16 @@ public class CardController : MonoBehaviour
             changeLevel();
         }
         if(canCountDown == 1 && countDown > 0.0f)
-        {
             countDown -= Time.unscaledDeltaTime;
-        }
+    }
+
+    /// <summary>
+    /// Inital GameStart function
+    /// </summary>
+    public void startGame()
+    {
+        randomiseCards();
+        StartCoroutine(roundDelay());
     }
 
     /// <summary>
@@ -148,6 +154,8 @@ public class CardController : MonoBehaviour
         foreach (GameObject card in cards)
         {
             card.GetComponent<CardScript>().changeImage();
+            if(endOfLevel == 1)
+                card.GetComponent<CardScript>().removePanel();
         }
 
         if(endOfLevel == 1)
@@ -164,9 +172,7 @@ public class CardController : MonoBehaviour
         yield return new WaitForSeconds(delay);
 
         foreach (GameObject card in cards)
-        {
             card.GetComponent<CardScript>().defaultImage();
-        }
 
         if (endOfLevel == 2)
         {

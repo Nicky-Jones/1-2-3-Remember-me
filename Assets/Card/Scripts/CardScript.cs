@@ -98,7 +98,6 @@ public class CardScript : MonoBehaviour {
         enableClick();
         correctCard = false;
         clickedCard = false;
-        this.transform.GetChild(0).gameObject.SetActive(false);
     }
 
     /// <summary>
@@ -108,11 +107,11 @@ public class CardScript : MonoBehaviour {
     {
         if(correctCard == true)
         {
-            this.GetComponent<Image>().sprite = cardDiamond;
+            this.GetComponent<Image>().sprite = cardHeart;
         }
         else if(heartCard == true)
         {
-            this.GetComponent<Image>().sprite = cardHeart;
+            this.GetComponent<Image>().sprite = cardDiamond;
         }
         else
         {
@@ -144,4 +143,8 @@ public class CardScript : MonoBehaviour {
         this.GetComponent<Button>().interactable = true;
     }
 
+    public void removePanel()
+    {
+        this.transform.GetChild(0).gameObject.SetActive(false);
+    }
 }

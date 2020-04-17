@@ -24,7 +24,6 @@ public class CardScript : MonoBehaviour {
     [Tooltip("Image for the blank card")]
     [SerializeField]
     private Sprite cardBlank;
-    public int testing = 0;
     private void Start()
     {
         cManager = GameObject.Find("SceneManager").GetComponent<CardController>();
@@ -46,7 +45,6 @@ public class CardScript : MonoBehaviour {
             heartCard = true;
         else
             Debug.Log("Error in SetCard function - CardScript");
-        testing = decision;
     }
     
     /// <summary>

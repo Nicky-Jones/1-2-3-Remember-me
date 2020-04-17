@@ -15,13 +15,13 @@ public class CardController : MonoBehaviour
     private int checkAnswerDelay = 0;
     private int correctAnswer = 0;
     [HeaderAttribute("Adjustable values")]
-    [Tooltip("Changable value for adjusting the length at which the delay of checking the cards for the banner animation")]
-    [SerializeField]
-    private float delayDuration = 5.0f;
     [Tooltip("Value for how long you want the player to have before his choices are locked in")]
     [SerializeField]
-    private float countDown = 5.0f; 
+    private float delayDuration = 5.0f;
+    [Tooltip("Changable value for adjusting the length at which the delay of checking the cards for the banner animation")]
+    [SerializeField]
     private int endRoundDuration = 5;
+    private float countDown = 5.0f;
     private int roundProgression = 0;
     private int canCountDown = 0;
     private int updateSwitch = 0;

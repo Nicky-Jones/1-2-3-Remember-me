@@ -9,10 +9,18 @@ public class UIManager : MonoBehaviour
     [SerializeField]
     private TextMeshProUGUI levelText;
     private DifficultyManager dManager;
+    [HeaderAttribute("Banner GameObjects")]
+    [Tooltip("Success Banner")]
     [SerializeField]
     private GameObject levelPassBanner;
+    [Tooltip("Failed Banner")]
     [SerializeField]
     private GameObject levelFailBanner;
+    [Space(20)]
+    [HeaderAttribute("ParticleSystems")]
+    [Tooltip("Array of ParticleSystems")]
+    [SerializeField]
+    private GameObject[] ParticleSystems;
 
     private void Awake()
     {
@@ -36,7 +44,11 @@ public class UIManager : MonoBehaviour
             levelPassBanner.SetActive(true);
         else if (value == 0)
         {
-            levelPassBanner.GetComponentInChildren<PlayAnimation>().resetPlayParticleSystem();
+            //levelPassBanner.GetComponentInChildren<PlayAnimation>().resetPlayParticleSystem();
+            foreach(GameObject particle in ParticleSystems)
+            {
+                particle.GetComponent<PlayAnimation>().resetPlayParticleSystem();
+            }
             levelPassBanner.SetActive(false);
         }
         else

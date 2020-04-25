@@ -62,6 +62,7 @@ public class Menu_Controller : MonoBehaviour {
         if(ingameMenu != null && ingameMenu.activeInHierarchy != true)
         {
             ingameMenu.SetActive(true);
+            Time.timeScale = 0;
         }
     }
 
@@ -71,6 +72,7 @@ public class Menu_Controller : MonoBehaviour {
     public void inGameMenuClose()
     {
         ingameMenu.SetActive(false);
+        Time.timeScale = 1;
     }
 
     /// <summary>

@@ -34,6 +34,11 @@ public class LevelManager : MonoBehaviour
         else
             dManager.levelDifficultyOne();
     }
+
+    public int getCurrentLevel()
+    {
+        return this.currentLevel;
+    }
     /// <summary>
     /// Changes the current level text by 1
     /// </summary>

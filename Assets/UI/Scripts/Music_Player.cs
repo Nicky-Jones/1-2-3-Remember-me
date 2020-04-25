@@ -23,27 +23,46 @@ public class Music_Player : MonoBehaviour {
 		audioSource = GetComponent<AudioSource>();
 		audioSource.clip = audioTracks;
         //Checks PlayerPrefs to see if the player has requested for the audio to be muted, and updates all the necessary variables 
-        if (PlayerPrefs.HasKey("_Mute")){
+        if (PlayerPrefs.HasKey("_Mute"))
+        {
 			int value = PlayerPrefs.GetInt("_Mute");
 			if(value == 0){isMute = false;}
 			if(value == 1){isMute = true;}
-		} else {
+		}
+        else
+        {
 			isMute = false;
 			PlayerPrefs.SetInt("_Mute", 0);
 		}
-		if( isMute ){ audioSource.mute = true; } else { audioSource.mute = false; audioSource.Play();}
+		if( isMute )
+            audioSource.mute = true;
+        else
+        {
+            audioSource.mute = false;
+            audioSource.Play();
+        }
 	}
 	
 	void Update () {
-		if(!playTracks) audioSource.Stop();
-		if(playTracks && !audioSource.isPlaying) StartPlayer();		
-		if(loopTrack){ audioSource.loop = true; } else { audioSource.loop = false; }
+		if(!playTracks)
+            audioSource.Stop();
+		if(playTracks && !audioSource.isPlaying)
+            StartPlayer();		
+		if(loopTrack)
+            audioSource.loop = true;
+        else
+            audioSource.loop = false;
 		
 		//Checks PlayerPrefs to see if the audio has been muted.
 		int value = PlayerPrefs.GetInt("_Mute");
-			if(value == 0){isMute = false;}
-				if(value == 1){isMute = true;}
-					if( isMute ){ audioSource.mute = true; } else { audioSource.mute = false; }
+		if(value == 0)
+            isMute = false;
+		if(value == 1)
+            isMute = true;
+        if ( isMute )
+            audioSource.mute = true;
+        else
+            audioSource.mute = false;
 	}
 	
 	public void StartPlayer(){

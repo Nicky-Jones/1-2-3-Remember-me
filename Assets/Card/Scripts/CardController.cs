@@ -26,13 +26,6 @@ public class CardController : MonoBehaviour
     private int canCountDown = 0;
     private int updateSwitch = 0;
 
-    //TODO:
-    // Add some kind of UI system that congratulates or consolodates the player if they've answered correctly/failed - Completed
-    // Add functionality to determin if the cards the player has selected are correct - completed but needs to be more flushed out by creating a display for success or failure.
-    // if the cards are correct, advance to the next level, otherwise repeat same level with randomised cards - again - completed.
-    // Add some kind of functionality to show the player which card they've currently clicked, at the moment its not immediately obvious after clicking the first one/two which ones you actually clicked
-    // perhaps this could be returned to how it is now if a "hard" mode is ever designed.
-    // add another difficulty that implements a new type of card they have to avoid clicking, e.g. 1 of hearts as it closely resembles the 1 of diamonds. - completed
 
     private void Start()
     {
@@ -84,8 +77,11 @@ public class CardController : MonoBehaviour
     /// </summary>
     public void startGame()
     {
-        randomiseCards();
-        StartCoroutine(roundDelay());
+        if (lManager.getCurrentLevel() <= 30 && lManager.getCurrentLevel() > 0)
+        {
+            randomiseCards();
+            StartCoroutine(roundDelay());
+        }
     }
 
     /// <summary>
@@ -112,9 +108,12 @@ public class CardController : MonoBehaviour
     /// </summary>
     private void startRound()
     {
+        if (lManager.getCurrentLevel() <= 30 && lManager.getCurrentLevel() > 0)
+        { 
+            randomiseCards();
+            StartCoroutine(roundDelay());
+        }
         resetCardManager();
-        randomiseCards();
-        StartCoroutine(roundDelay());
     }
 
     /// <summary>
@@ -160,12 +159,19 @@ public class CardController : MonoBehaviour
 
         if(endOfLevel == 1)
         {
-            if (correctAnswer == dManager.getNumberOfAnswers())
+            if (lManager.getCurrentLevel() < 30)
             {
-                uiManager.setLevelPassBanner(1);
+                if (correctAnswer == dManager.getNumberOfAnswers())
+                {
+                    uiManager.setLevelPassBanner(true);
+                }
+                else
+                    uiManager.setLevelFailBanner(false);
             }
             else
-                uiManager.setLevelFailBanner(1);
+            {
+                uiManager.completedGame();
+            }
             endOfLevel = 2;
         }
 
@@ -176,8 +182,8 @@ public class CardController : MonoBehaviour
 
         if (endOfLevel == 2)
         {
-            uiManager.setLevelPassBanner(0);
-            uiManager.setLevelFailBanner(0);
+            uiManager.setLevelPassBanner(true);
+            uiManager.setLevelFailBanner(false);
         }
 
     }

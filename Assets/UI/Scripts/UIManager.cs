@@ -21,6 +21,11 @@ public class UIManager : MonoBehaviour
     [Tooltip("Array of ParticleSystems")]
     [SerializeField]
     private GameObject[] ParticleSystems;
+    [Space(20)]
+    [HeaderAttribute("Completion")]
+    [Tooltip("CompletionUIMenu")]
+    [SerializeField]
+    private GameObject completedScene;
 
     private void Awake()
     {
@@ -35,14 +40,14 @@ public class UIManager : MonoBehaviour
         levelText.text = level.ToString();
     }
     /// <summary>
-    /// if value = 1 set banner true if value = 0 set banner to false
+    /// Pass true if you want the level pass banner to be actived, pass false if you want it to be deactived
     /// </summary>
     /// <param name="value"> if value = 1 set banner true if value = 0 set banner to false</param>
-    public void setLevelPassBanner(int value)
+    public void setLevelPassBanner(bool value)
     {
-        if (value == 1)
+        if (value == true)
             levelPassBanner.SetActive(true);
-        else if (value == 0)
+        else if (value == false)
         {
             //levelPassBanner.GetComponentInChildren<PlayAnimation>().resetPlayParticleSystem();
             foreach(GameObject particle in ParticleSystems)
@@ -55,16 +60,21 @@ public class UIManager : MonoBehaviour
             Debug.Log("Error: SetLevelPassBanner not receiving correct value - UIManager Script");        
     }
 
+    public void completedGame()
+    {
+        completedScene.SetActive(true);
+    }
+
     /// <summary>
-    /// if value = 1 set banner true if value = 0 set banner to false
+    /// pass true if you want the fail banner to be actived, pass false if you want the fail banner to be deactived
     /// </summary>
     /// <param name="value"></param>
-    public void setLevelFailBanner(int value)
+    public void setLevelFailBanner(bool value)
     {
-        if (value == 1)
+        if (value == true)
             levelFailBanner.SetActive(true);
 
-        else if (value == 0)
+        else if (value == false)
             levelFailBanner.SetActive(false);
         else
             Debug.Log("Error: SetLevelFailBanner not receiving correct value - UIManager Script");

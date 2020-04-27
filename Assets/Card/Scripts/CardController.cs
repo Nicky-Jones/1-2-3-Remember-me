@@ -25,6 +25,8 @@ public class CardController : MonoBehaviour
     private int roundProgression = 0;
     private int canCountDown = 0;
     private int updateSwitch = 0;
+    private AdsManager adManager;
+    private bool pauseCoroutine;
 
 
     private void Start()
@@ -33,7 +35,7 @@ public class CardController : MonoBehaviour
         lManager = GameObject.Find("SceneManager").GetComponent<LevelManager>();
         dManager = GameObject.Find("SceneManager").GetComponent<DifficultyManager>();
         uiManager = GameObject.Find("SceneManager").GetComponent<UIManager>();
-
+        adManager = (AdsManager)FindObjectOfType(typeof(AdsManager));
         countDown = delayDuration;
     }
 
@@ -62,11 +64,6 @@ public class CardController : MonoBehaviour
             roundProgression = 1;
             StartCoroutine(displayCards(endRoundDuration, 1));
             canCountDown = 1;
-        }
-        if(countDown < 0.0f && roundProgression == 1)
-        {
-            resetCountDown(delayDuration);
-            changeLevel();
         }
         if(canCountDown == 1 && countDown > 0.0f)
             countDown -= Time.unscaledDeltaTime;
@@ -108,12 +105,12 @@ public class CardController : MonoBehaviour
     /// </summary>
     private void startRound()
     {
-        if (lManager.getCurrentLevel() <= 30 && lManager.getCurrentLevel() > 0)
+        resetCardManager();
+        if (lManager.getCurrentLevel() <= 30)
         { 
             randomiseCards();
             StartCoroutine(roundDelay());
         }
-        resetCardManager();
     }
 
     /// <summary>
@@ -150,23 +147,27 @@ public class CardController : MonoBehaviour
     /// <returns>returns nothing after a set delay</returns>
     IEnumerator displayCards(int delay = 1, int endOfLevel = 0)
     {
+        if (adManager.adStarted == true)
+            pauseCoroutine = true;
+        else if (adManager.adStarted == false)
+            pauseCoroutine = false;
         foreach (GameObject card in cards)
         {
             card.GetComponent<CardScript>().changeImage();
-            if(endOfLevel == 1)
+            if (endOfLevel == 1)
                 card.GetComponent<CardScript>().removePanel();
         }
 
-        if(endOfLevel == 1)
+        if (endOfLevel == 1)
         {
-            if (lManager.getCurrentLevel() < 30)
+            if (lManager.getCurrentLevel() <= 30)
             {
                 if (correctAnswer == dManager.getNumberOfAnswers())
                 {
                     uiManager.setLevelPassBanner(true);
                 }
                 else
-                    uiManager.setLevelFailBanner(false);
+                    uiManager.setLevelFailBanner(true);
             }
             else
             {
@@ -175,16 +176,26 @@ public class CardController : MonoBehaviour
             endOfLevel = 2;
         }
 
-        yield return new WaitForSeconds(delay);
-
-        foreach (GameObject card in cards)
-            card.GetComponent<CardScript>().defaultImage();
-
-        if (endOfLevel == 2)
+        if (adManager.adStarted != true)
         {
-            uiManager.setLevelPassBanner(true);
-            uiManager.setLevelFailBanner(false);
+            yield return new WaitForSeconds(delay);
+
+            foreach (GameObject card in cards)
+                card.GetComponent<CardScript>().defaultImage();
+
+            if (endOfLevel == 2)
+            {
+                uiManager.setLevelPassBanner(false);
+                uiManager.setLevelFailBanner(false);
+            }
+            if(roundProgression == 1)
+            {
+                changeLevel();
+            }
         }
+        else
+            yield return null;
+        
 
     }
 

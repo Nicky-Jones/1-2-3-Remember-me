@@ -50,7 +50,7 @@ public class AdsManager : MonoBehaviour, IUnityAdsListener
     private void playAd()
     {
         PlayInterstitialAd();
-        adTimer = 25.0f;
+        adTimer = 180.0f;
     }
     private void InitializeAd()
     {

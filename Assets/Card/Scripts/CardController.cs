@@ -106,11 +106,13 @@ public class CardController : MonoBehaviour
     private void startRound()
     {
         resetCardManager();
-        if (lManager.getCurrentLevel() <= 30)
-        { 
+        if (lManager.getCurrentLevel() < 30)
+        {
             randomiseCards();
             StartCoroutine(roundDelay());
         }
+        else
+            uiManager.completedGame();
     }
 
     /// <summary>
@@ -133,7 +135,7 @@ public class CardController : MonoBehaviour
     /// </summary>
     private void changeLevel()
     {
-        if (correctAnswer == dManager.getNumberOfAnswers())
+        if (correctAnswer == dManager.getNumberOfAnswers() && lManager.getCurrentLevel() < 30)
         {
             lManager.setCurrentLevel();
         }
@@ -147,56 +149,59 @@ public class CardController : MonoBehaviour
     /// <returns>returns nothing after a set delay</returns>
     IEnumerator displayCards(int delay = 1, int endOfLevel = 0)
     {
-        if (adManager.adStarted == true)
-            pauseCoroutine = true;
-        else if (adManager.adStarted == false)
-            pauseCoroutine = false;
-        foreach (GameObject card in cards)
+        if (adManager != null)
         {
-            card.GetComponent<CardScript>().changeImage();
-            if (endOfLevel == 1)
-                card.GetComponent<CardScript>().removePanel();
-        }
-
-        if (endOfLevel == 1)
-        {
-            if (lManager.getCurrentLevel() <= 30)
-            {
-                if (correctAnswer == dManager.getNumberOfAnswers())
-                {
-                    uiManager.setLevelPassBanner(true);
-                }
-                else
-                    uiManager.setLevelFailBanner(true);
-            }
-            else
-            {
-                uiManager.completedGame();
-            }
-            endOfLevel = 2;
-        }
-
-        if (adManager.adStarted != true)
-        {
-            yield return new WaitForSeconds(delay);
+            if (adManager.adStarted == true)
+                pauseCoroutine = true;
+            else if (adManager.adStarted == false)
+                pauseCoroutine = false;
 
             foreach (GameObject card in cards)
-                card.GetComponent<CardScript>().defaultImage();
+            {
+                card.GetComponent<CardScript>().changeImage();
+                if (endOfLevel == 1)
+                    card.GetComponent<CardScript>().removePanel();
+            }
 
-            if (endOfLevel == 2)
+            if (endOfLevel == 1)
             {
-                uiManager.setLevelPassBanner(false);
-                uiManager.setLevelFailBanner(false);
+                if (lManager.getCurrentLevel() <= 30)
+                {
+                    if (correctAnswer == dManager.getNumberOfAnswers())
+                    {
+                        uiManager.setLevelPassBanner(true);
+                    }
+                    else
+                        uiManager.setLevelFailBanner(true);
+                }
+                else
+                {
+                    uiManager.completedGame();
+                }
+                endOfLevel = 2;
             }
-            if(roundProgression == 1)
+
+            if (adManager.adStarted != true)
             {
-                changeLevel();
+                yield return new WaitForSeconds(delay);
+
+                foreach (GameObject card in cards)
+                    card.GetComponent<CardScript>().defaultImage();
+
+                if (endOfLevel == 2)
+                {
+                    uiManager.setLevelPassBanner(false);
+                    uiManager.setLevelFailBanner(false);
+                }
+                if (roundProgression == 1)
+                {
+                    changeLevel();
+                }
             }
+            else
+                yield return null;
+
         }
-        else
-            yield return null;
-        
-
     }
 
     /// <summary>
